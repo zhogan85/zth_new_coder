@@ -1,5 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
+import numpy as np
 from collections import Counter
 
 MY_FILE = "sample_sfpd_incident_all.csv"
@@ -63,8 +64,47 @@ def visualize_days():
 	#close plot file
 	plt.clf()
 	
+def visualize_type():
+	"""Visualize data by category in a bar graph"""
+	
+	#grab our parsed data
+	data_file = parse(MY_FILE, ",")
+	
+	#make a new variable, counter, from iterating through each line of
+	#data in parsed data, and count how many incidents happen by category
+	counter = Counter(item["Category"] for item in data_file)
+	
+	#set the labels which are based on the keys of our counter
+	#since order doesn't matter, we can just use counter.keys()
+	labels = tuple(counter.keys())
+	
+	#set exactly where the labels should hit the x-axis
+	xlocations = np.arange(len(labels)) + 0.5
+	
+	#width of each bar that will be plotted
+	width = 0.5
+	
+	#assign data to a bar plot
+	plt.bar(xlocations, counter.values(), width=width)
+	
+	#assign labels and tick location to x-axis
+	plt.xticks(xlocations + width /2, labels, rotation=90)
+	
+	#give more room to the x-axis so the labels aren't cut off
+	plt.subplots_adjust(bottom=0.4)
+	
+	#make the overall graph/figure larger
+	plt.rcParams['figure.figsize'] = 12, 8
+	
+	#save the graph
+	plt.savefig("type.png")
+	
+	#close the plot figure
+	plt.clf()
+
 def main():
 	visualize_days()
+	visualize_type()
 	
 if __name__ == "__main__":
 	main()
